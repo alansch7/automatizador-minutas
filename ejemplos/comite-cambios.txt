@@ -1,0 +1,12 @@
+Reunión: Comité de cambios - Tienda Online Demo
+Fecha: 2026-11-03
+Asistentes: Paula Reyes, Tomás Ibarra, Carla Núñez, Javier Ortega
+
+[15:00] Paula Reyes: Revisemos los cambios propuestos para el próximo release.
+[15:02] Tomás Ibarra: El cambio del medio de pago tiene un riesgo: el proveedor no ha entregado las credenciales de prueba.
+[15:03] Carla Núñez: Yo levanto el ticket con el proveedor y les aviso el viernes.
+[15:04] Paula Reyes: Se aprueba el cambio del buscador para el release del 15/11.
+[15:05] Javier Ortega: Me hago cargo de preparar el plan de rollback en dos días.
+[15:06] Paula Reyes: Falta definir quién hace las pruebas de regresión.
+[15:07] Tomás Ibarra: Las pruebas de regresión quedan a cargo de Javier antes de fin de mes.
+[15:08] Paula Reyes: Quedamos de acuerdo entonces. Cierro la reunión.

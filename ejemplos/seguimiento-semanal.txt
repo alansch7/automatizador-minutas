@@ -1,0 +1,18 @@
+Reunión: Seguimiento semanal - Proyecto Atlas (migración de intranet)
+Fecha: 2026-10-19
+
+[09:00] Valentina Soto: Buenos días a todos. Partamos revisando el estado de la migración piloto.
+[09:01] Matías Herrera: La copia de prueba del sitio de RR.HH. terminó bien, pero encontramos 40 archivos con rutas demasiado largas. Me preocupa que en las bibliotecas de Operaciones haya muchos más.
+[09:03] Valentina Soto: Entendido. Matías, ¿puedes preparar un escaneo de rutas largas de todas las bibliotecas para el jueves?
+[09:03] Matías Herrera: Sí, sin problema.
+[09:04] Ignacio Morales: Yo me encargo de actualizar el checklist de validación con ese caso antes del miércoles.
+[09:05] Valentina Soto: Perfecto. Pasemos a comunicaciones.
+[09:06] Fernanda Paredes: El comunicado de congelamiento está listo en borrador. Acordamos que se publica solo después de que el comité lo apruebe.
+[09:07] Rodrigo Vidal: Lo reviso hoy en la tarde. Además, la aprobación del comunicado queda a cargo de Rodrigo para mañana.
+[09:08] Fernanda Paredes: Me comprometo a enviar la invitación a la capacitación de usuarios clave el 28 de octubre.
+[09:09] Valentina Soto: Siguiente tema: plan de olas.
+[09:10] Rodrigo Vidal: Se decide mover el área de Finanzas a la última ola por el cierre contable.
+[09:11] Ignacio Morales: Hay que confirmar con compras el cupo de licencias para externos.
+[09:12] Valentina Soto: Dejémoslo anotado. Fernanda se encarga de coordinar con los dueños de contenido la próxima semana.
+[09:13] Matías Herrera: Una cosa más: dependemos de que TI habilite la cuenta de servicio, si no, la ola 1 se atrasa.
+[09:14] Valentina Soto: Quedo con escalar ese tema a TI hoy mismo. Gracias a todos, nos vemos el próximo lunes.

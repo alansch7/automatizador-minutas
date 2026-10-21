@@ -1,0 +1,14 @@
+{
+  "name": "automatizador-minutas",
+  "version": "1.0.0",
+  "description": "Convierte una transcripción de reunión en un acta con decisiones, compromisos, responsables y fechas.",
+  "license": "MIT",
+  "private": true,
+  "bin": {
+    "minuta": "src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "ejemplo": "node src/cli.js ejemplos/seguimiento-semanal.txt --salida ejemplos/acta-seguimiento-semanal.md"
+  }
+}

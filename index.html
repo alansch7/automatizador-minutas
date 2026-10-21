@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automatizador de minutas</title>
+  <style>
+    :root { --bg:#f6f7f9; --panel:#fff; --texto:#1d2330; --suave:#5f6b7a; --borde:#e2e6ec; --acento:#2f5bd3; --malo:#c0392b; --malo-bg:#fbe4e1; --alerta:#b7791f; --alerta-bg:#fbf0d9; --neutro-bg:#eef1f5; color-scheme: light; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#12151b; --panel:#1b2029; --texto:#e6e9ee; --suave:#9aa5b4; --borde:#2c333f; --acento:#7b9cff; --malo:#ff7b6b; --malo-bg:#45201c; --alerta:#f0b85a; --alerta-bg:#3d3018; --neutro-bg:#252b36; color-scheme: dark; }
+    }
+    * { box-sizing: border-box; }
+    body { margin:0; font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--texto); }
+    header { padding:1.25rem 1.5rem; background:var(--panel); border-bottom:1px solid var(--borde); }
+    h1 { margin:0; font-size:1.35rem; }
+    header p { margin:.2rem 0 0; color:var(--suave); }
+    main { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:1rem; padding:1.25rem 1.5rem; max-width:1400px; margin:0 auto; }
+    .panel { background:var(--panel); border:1px solid var(--borde); border-radius:10px; padding:1rem; min-width:0; }
+    .barra { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.75rem; align-items:center; }
+    .barra .sep { flex:1; }
+    button, select, input, textarea { font:inherit; color:inherit; }
+    button { border:1px solid var(--borde); background:var(--panel); padding:.45rem .8rem; border-radius:8px; cursor:pointer; }
+    button:hover { border-color:var(--acento); }
+    button.primario { background:var(--acento); border-color:var(--acento); color:#fff; }
+    textarea { width:100%; min-height:520px; resize:vertical; padding:.75rem; border:1px solid var(--borde); border-radius:8px; background:var(--bg); font:13px/1.5 ui-monospace,Consolas,monospace; }
+    h2 { font-size:1.15rem; margin:0 0 .25rem; }
+    h3 { font-size:.8rem; text-transform:uppercase; letter-spacing:.04em; color:var(--suave); margin:1.25rem 0 .4rem; }
+    .meta { color:var(--suave); margin:0; }
+    ul { margin:0; padding-left:1.2rem; }
+    li { margin:.2rem 0; }
+    .fuente { color:var(--suave); font-size:.8rem; }
+    table { width:100%; border-collapse:collapse; }
+    th { text-align:left; font-size:.75rem; color:var(--suave); padding:.4rem; border-bottom:1px solid var(--borde); }
+    td { padding:.45rem .4rem; border-bottom:1px solid var(--borde); vertical-align:top; }
+    .pill { display:inline-block; padding:.05rem .5rem; border-radius:999px; font-size:.78rem; background:var(--neutro-bg); white-space:nowrap; }
+    .pill.sin-fecha { background:var(--alerta-bg); color:var(--alerta); }
+    .riesgo { color:var(--malo); }
+    .stats { display:flex; flex-wrap:wrap; gap:.5rem; margin:.75rem 0 0; }
+    .stats span { background:var(--neutro-bg); border-radius:8px; padding:.25rem .6rem; font-size:.8rem; }
+    .vacio { color:var(--suave); font-style:italic; }
+    .aviso { color:var(--suave); font-size:.8rem; }
+    @media (max-width:900px) { main { grid-template-columns:1fr; padding:16px; } header { padding:16px; } textarea { min-height:300px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Automatizador de minutas</h1>
+    <p>Pega una transcripción y obtén el acta con decisiones, compromisos, responsables y fechas. Todo corre en tu navegador.</p>
+  </header>
+  <main>
+    <section class="panel">
+      <div class="barra">
+        <select id="ejemplo" aria-label="Cargar ejemplo">
+          <option value="">Cargar ejemplo…</option>
+          <option value="ejemplos/seguimiento-semanal.txt">Seguimiento semanal (migración intranet)</option>
+          <option value="ejemplos/comite-cambios.txt">Comité de cambios (tienda online)</option>
+        </select>
+        <span class="sep"></span>
+        <button id="generar" class="primario">Generar acta</button>
+      </div>
+      <textarea id="entrada" spellcheck="false" placeholder="Reunión: Título de la reunión&#10;Fecha: 2026-10-19&#10;&#10;[09:00] Nombre Apellido: lo que dijo…"></textarea>
+      <p class="aviso">Formato: una intervención por línea, <code>[hh:mm] Nombre: texto</code>. Encabezados opcionales: <code>Reunión:</code>, <code>Fecha:</code>, <code>Asistentes:</code>.</p>
+    </section>
+    <section class="panel">
+      <div class="barra">
+        <strong>Acta</strong>
+        <span class="sep"></span>
+        <button id="copiar" disabled>Copiar Markdown</button>
+        <button id="descargar" disabled>Descargar .md</button>
+        <button id="csv" disabled>Compromisos .csv</button>
+      </div>
+      <div id="acta"><p class="vacio">Carga un ejemplo o pega una transcripción.</p></div>
+    </section>
+  </main>
+
+  <script src="src/minutas.js"></script>
+  <script>
+    (function () {
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      let actual = null;
+
+      function fuente(x) { return `<span class="fuente">— ${esc(x.hablante)}${x.hora ? ' · ' + esc(x.hora) : ''}</span>`; }
+      function lista(arr, fn, vacio) { return arr.length ? `<ul>${arr.map((x) => `<li>${fn(x)}</li>`).join('')}</ul>` : `<p class="vacio">${vacio}</p>`; }
+
+      function render(acta) {
+        const f = Minutas.formatearFecha;
+        $('#acta').innerHTML = `
+          <h2>${esc(acta.titulo)}</h2>
+          <p class="meta">${f(acta.fecha)} · ${esc(acta.asistentes.join(', '))}</p>
+          <div class="stats">
+            <span>${acta.compromisos.length} compromisos</span><span>${acta.decisiones.length} decisiones</span>
+            <span>${acta.riesgos.length} riesgos</span><span>${acta.sinResponsable.length} sin responsable</span>
+          </div>
+          <h3>Temas tratados</h3>${lista(acta.temas, esc, 'Sin temas marcados.')}
+          <h3>Decisiones</h3>${lista(acta.decisiones, (d) => `${esc(d.texto)} ${fuente(d)}`, 'Sin decisiones detectadas.')}
+          <h3>Compromisos</h3>
+          ${acta.compromisos.length ? `<table><thead><tr><th>#</th><th>Compromiso</th><th>Responsable</th><th>Fecha</th></tr></thead><tbody>
+            ${acta.compromisos.map((c) => `<tr><td>${c.id}</td><td>${esc(c.tarea)}</td><td>${esc(c.responsable)}</td>
+              <td><span class="pill ${c.fecha ? '' : 'sin-fecha'}">${f(c.fecha)}</span></td></tr>`).join('')}
+          </tbody></table>` : '<p class="vacio">Sin compromisos detectados.</p>'}
+          <h3>Riesgos y alertas</h3>${lista(acta.riesgos, (r) => `<span class="riesgo">${esc(r.texto)}</span> ${fuente(r)}`, 'Sin riesgos detectados.')}
+          <h3>Pendientes sin responsable</h3>${lista(acta.sinResponsable, (p) => `${esc(p.texto)} ${fuente(p)}`, 'Todo tiene dueño.')}`;
+      }
+
+      function generar() {
+        const texto = $('#entrada').value.trim();
+        if (!texto) return;
+        actual = Minutas.generarActa(texto);
+        render(actual);
+        ['#copiar', '#descargar', '#csv'].forEach((s) => ($(s).disabled = false));
+      }
+
+      function descargar(nombre, contenido, tipo) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([contenido], { type: tipo }));
+        a.download = nombre;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+
+      $('#generar').addEventListener('click', generar);
+      $('#entrada').addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) generar(); });
+
+      $('#ejemplo').addEventListener('change', async (e) => {
+        if (!e.target.value) return;
+        try {
+          const r = await fetch(e.target.value);
+          $('#entrada').value = await r.text();
+          generar();
+        } catch (_) {
+          $('#acta').innerHTML = '<p class="vacio">No se pudo cargar el ejemplo. Si abriste el archivo con doble clic, usa GitHub Pages o un servidor local (npx serve).</p>';
+        }
+      });
+
+      $('#copiar').addEventListener('click', async () => {
+        await navigator.clipboard.writeText(Minutas.aMarkdown(actual));
+        $('#copiar').textContent = '¡Copiado!';
+        setTimeout(() => ($('#copiar').textContent = 'Copiar Markdown'), 1500);
+      });
+      $('#descargar').addEventListener('click', () => descargar(`acta-${actual.fecha}.md`, Minutas.aMarkdown(actual), 'text/markdown;charset=utf-8'));
+      $('#csv').addEventListener('click', () => {
+        const q = (s) => `"${String(s ?? '').replace(/"/g, '""')}"`;
+        const filas = actual.compromisos.map((c) => [c.id, q(c.tarea), q(c.responsable), c.fecha || '', q(actual.titulo)].join(','));
+        descargar(`compromisos-${actual.fecha}.csv`, '﻿' + ['id,compromiso,responsable,fecha,origen', ...filas].join('\n'), 'text/csv;charset=utf-8');
+      });
+    })();
+  </script>
+</body>
+</html>
