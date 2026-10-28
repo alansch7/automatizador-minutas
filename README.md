@@ -72,9 +72,11 @@ Los nombres cortos se resuelven contra la lista de asistentes: "Matías" pasa a 
 - **Un solo módulo para web y CLI** (`src/minutas.js`), testeado con `node:test`.
 - **El acta es un borrador.** El pie del acta pide revisarla antes de enviarla: las reglas cubren las formas más comunes de comprometerse, no todas.
 
-## Resultado
+## Resultado (con datos de ejemplo)
 
-Con la transcripción de ejemplo, una reunión de 14 minutos con 5 personas, el acta sale en menos de un segundo. Trae 2 temas, 2 decisiones, 6 compromisos (todos con responsable y fecha resueltos), 2 riesgos y 1 pendiente que quedó sin dueño. En el ejemplo, la gente se compromete de distintas formas: en primera persona, en tercera persona, en voz pasiva y con una pregunta directa ("Matías, ¿puedes…?"). Todas quedan cubiertas por 7 tests automatizados.
+> Las cifras de esta sección salen de la **transcripción ficticia incluida en el repo**, no de una reunión real. Sirven para mostrar cómo se comporta la herramienta.
+
+Con la transcripción de ejemplo, una reunión ficticia de 14 minutos con 5 personas, el acta sale en menos de un segundo. Trae 2 temas, 2 decisiones, 6 compromisos (todos con responsable y fecha resueltos), 2 riesgos y 1 pendiente que quedó sin dueño. En el ejemplo, la gente se compromete de distintas formas: en primera persona, en tercera persona, en voz pasiva y con una pregunta directa ("Matías, ¿puedes…?"). Todas quedan cubiertas por 7 tests automatizados.
 
 ## Limitaciones conocidas
 
