@@ -2,7 +2,15 @@
 
 Convierte la **transcripción de una reunión** en un **acta estructurada**: asistentes, temas, decisiones, compromisos (con responsable y fecha), riesgos y pendientes que quedaron sin dueño.
 
+**[Ver demo en vivo](https://alansch7.github.io/automatizador-minutas/)**
+
 > Las transcripciones de `ejemplos/` son **ficticias**. Personas, empresas y proyectos fueron inventados para la demo.
+
+![Transcripción y acta generada](docs/acta.jpg)
+
+## El problema
+
+Escribir el acta después de cada reunión toma tiempo y se posterga. Cuando por fin se envía, muchos compromisos no tienen responsable ni fecha clara. Las herramientas de videollamada ya entregan la transcripción. Lo que falta es convertirla en algo accionable: **quién hace qué y para cuándo**.
 
 ## Ejemplo
 
@@ -63,6 +71,10 @@ Los nombres cortos se resuelven contra la lista de asistentes: "Matías" pasa a 
 - **Cada ítem conserva quién lo dijo y a qué hora**, para poder verificarlo contra la grabación.
 - **Un solo módulo para web y CLI** (`src/minutas.js`), testeado con `node:test`.
 - **El acta es un borrador.** El pie del acta pide revisarla antes de enviarla: las reglas cubren las formas más comunes de comprometerse, no todas.
+
+## Resultado
+
+Con la transcripción de ejemplo, una reunión de 14 minutos con 5 personas, el acta sale en menos de un segundo. Trae 2 temas, 2 decisiones, 6 compromisos (todos con responsable y fecha resueltos), 2 riesgos y 1 pendiente que quedó sin dueño. En el ejemplo, la gente se compromete de distintas formas: en primera persona, en tercera persona, en voz pasiva y con una pregunta directa ("Matías, ¿puedes…?"). Todas quedan cubiertas por 7 tests automatizados.
 
 ## Limitaciones conocidas
 
